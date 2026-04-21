@@ -2,7 +2,8 @@ name: Deploy Static Website
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -14,30 +15,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: CHeckout Code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: install Dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Build Static Site
+      - name: Build Site
         run: npm run build
         env:
-          DB_PASSWORD: ${{ Secrets.DB_PASSWORD }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload Artifact
+      - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './dist' # This matches the folder created in package.json
 
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
